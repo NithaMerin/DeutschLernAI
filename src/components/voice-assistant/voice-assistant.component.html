@@ -1,0 +1,67 @@
+<div class="fixed inset-0 bg-black/50 z-30" (click)="close.emit()"></div>
+<div class="fixed inset-0 z-40 flex items-end justify-center p-4 sm:items-center">
+  <div class="w-full max-w-2xl h-[85vh] max-h-[700px] bg-white rounded-2xl shadow-2xl flex flex-col assistant-modal-enter">
+    <header class="flex-shrink-0 p-4 border-b flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+        </div>
+        <h2 class="text-lg font-bold text-slate-800">{{ 'assistant.title' | translate }}</h2>
+      </div>
+      <button (click)="close.emit()" class="p-2 rounded-full hover:bg-slate-100">
+        <svg class="w-6 h-6 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </header>
+
+    <div #chatContainer class="flex-grow p-4 overflow-y-auto space-y-4">
+      @for(message of conversation(); track message; let i = $index) {
+        <div class="flex" [class.justify-end]="message.author === 'user'" [class.justify-start]="message.author === 'bot'">
+          <div 
+            class="rounded-xl px-4 py-2.5 max-w-md shadow-sm"
+            [class.bg-blue-500]="message.author === 'user'"
+            [class.text-white]="message.author === 'user'"
+            [class.bg-slate-100]="message.author === 'bot'"
+            [class.text-slate-800]="message.author === 'bot'">
+            {{ message.text }}
+          </div>
+        </div>
+      }
+       @if(status() === 'processing') {
+         <div class="flex justify-start">
+            <div class="rounded-lg px-4 py-2 max-w-sm bg-slate-100 text-slate-800">
+                <div class="flex items-center space-x-2">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot" style="animation-delay: 0.2s;"></span>
+                    <span class="typing-dot" style="animation-delay: 0.4s;"></span>
+                </div>
+            </div>
+         </div>
+      }
+    </div>
+
+    <footer class="flex-shrink-0 p-4 flex flex-col items-center border-t">
+      <button 
+        (click)="toggleListen()"
+        class="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 shadow-md"
+        [class.bg-purple-600]="status() !== 'listening'"
+        [class.hover:bg-purple-700]="status() !== 'listening'"
+        [class.bg-red-600]="status() === 'listening'"
+        [class.hover:bg-red-700]="status() === 'listening'"
+        [disabled]="status() === 'processing' || status() === 'speaking'">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+        </svg>
+      </button>
+      <p class="text-sm text-slate-500 mt-2 h-5 text-center">
+        @switch (status()) {
+          @case ('idle') { <span>{{ 'assistant.micCue' | translate }}</span> }
+          @case ('listening') { <span class="text-red-600 font-semibold">{{ 'level.listening' | translate }}</span> }
+          @case ('processing') { <span class="text-blue-600 font-semibold">{{ 'chatbot.thinking' | translate }}</span> }
+          @case ('speaking') { <span class="text-purple-600 font-semibold">{{ 'chatbot.speaking' | translate }}</span> }
+        }
+      </p>
+    </footer>
+  </div>
+</div>

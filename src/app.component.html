@@ -1,0 +1,103 @@
+@if (showAiSettings()) {
+  <app-ai-settings (close)="closeAiSettings()"></app-ai-settings>
+}
+
+@if (showVoiceAssistant()) {
+  <app-voice-assistant (close)="closeVoiceAssistant()"></app-voice-assistant>
+}
+
+<div class="min-h-screen flex flex-col">
+  <header class="bg-white shadow-md sticky top-0 z-10">
+    <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">DeutschLern</span>
+        <div class="flex items-center space-x-1">
+          <span class="text-sm bg-indigo-100 text-indigo-700 font-semibold px-2 py-0.5 rounded-full">AI</span>
+          <button (click)="toggleAiSettings()" title="AI Settings" class="p-1.5 rounded-full hover:bg-slate-200 transition-colors">
+            <svg class="w-5 h-5 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.438.995s.145.755.438.995l1.003.827c.48.398.668 1.03.26 1.431l-1.296 2.247a1.125 1.125 0 0 1-1.37.49l-1.217-.456c-.355-.133-.75-.072-1.075.124a6.57 6.57 0 0 1-.22.127c-.331.183-.581.495-.645.87l-.213 1.281c-.09.543-.56.94-1.11.94h-2.593c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.645-.87a6.52 6.52 0 0 1-.22-.127c-.324-.196-.72-.257-1.075-.124l-1.217.456a1.125 1.125 0 0 1-1.37-.49l-1.296-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.437-.995s-.145-.755-.437-.995l-1.004-.827a1.125 1.125 0 0 1-.26-1.431l1.296-2.247a1.125 1.125 0 0 1 1.37-.49l1.217.456c.355.133.75.072 1.075-.124.072-.044.146-.087.22-.127.332-.183.582-.495.645-.87l.213-1.281Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center space-x-1 md:space-x-2">
+        <button
+          (click)="showDashboard()"
+          [class.bg-indigo-100]="ViewState.isDashboard"
+          [class.text-indigo-700]="ViewState.isDashboard"
+          class="px-3 py-2 rounded-md text-slate-600 hover:bg-slate-100 transition-colors font-medium text-sm md:text-base">
+          {{ 'nav.learningPath' | translate }}
+        </button>
+        <button
+          (click)="showTranslator()"
+          [class.bg-indigo-100]="ViewState.isTranslator"
+          [class.text-indigo-700]="ViewState.isTranslator"
+          class="px-3 py-2 rounded-md text-slate-600 hover:bg-slate-100 transition-colors font-medium text-sm md:text-base">
+          {{ 'nav.translator' | translate }}
+        </button>
+        
+        <div class="relative">
+          <button (click)="toggleReportCenter()" title="Reports" class="p-2 rounded-full hover:bg-slate-200 transition-colors">
+            <svg class="w-6 h-6 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+            </svg>
+            @if(reportService.hasNewReport()){
+              <span class="absolute top-1 right-1 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white animate-pulse"></span>
+            }
+          </button>
+          @if(showReportCenter()){
+            <app-report-center (close)="showReportCenter.set(false)" (viewReport)="viewReport($event)"></app-report-center>
+          }
+        </div>
+
+        <div class="relative ml-2">
+          <select (change)="switchLanguage($event)" class="text-sm appearance-none bg-slate-100 border-slate-200 border rounded-md py-2 pl-3 pr-8 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="de" [selected]="translationService.currentLanguage() === 'de'">Deutsch</option>
+            <option value="en" [selected]="translationService.currentLanguage() === 'en'">English</option>
+            <option value="ta" [selected]="translationService.currentLanguage() === 'ta'">தமிழ்</option>
+          </select>
+           <svg class="w-5 h-5 text-slate-400 absolute top-1/2 right-2 -translate-y-1/2 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="flex-grow container mx-auto p-6 md:p-8 content-enter">
+    @if (ViewState.isDashboard) {
+      <app-dashboard (levelSelected)="showLevel($event)"></app-dashboard>
+    }
+    @if (ViewState.isLevel && selectedLevel()) {
+      <app-level-details [level]="selectedLevel()!" (back)="showDashboard()"></app-level-details>
+    }
+    @if (ViewState.isTranslator) {
+      <app-translator></app-translator>
+    }
+  </main>
+
+  <footer class="bg-slate-200 text-center py-4 border-t border-slate-300">
+    <p class="text-slate-500 text-sm">{{ 'footer.poweredBy' | translate }}</p>
+  </footer>
+
+  <button (click)="toggleVoiceAssistant()" title="Voice Assistant" class="fixed bottom-6 right-6 bg-purple-600 text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center hover:bg-purple-700 transition-transform hover:scale-110 z-20">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+    </svg>
+  </button>
+</div>
+
+@if (reportToView(); as report) {
+  <div class="fixed inset-0 bg-black/60 z-40 flex justify-center items-center p-4" (click)="closeReportView()">
+    <div class="bg-white rounded-xl shadow-2xl z-50 w-full max-w-4xl h-[90vh] flex flex-col" (click)="$event.stopPropagation()">
+       <header class="p-4 border-b flex justify-between items-center flex-shrink-0">
+          <h2 class="text-xl font-bold text-slate-800">{{ report.title }}</h2>
+          <button (click)="closeReportView()" class="p-2 rounded-full hover:bg-slate-100 transition-colors">
+            <svg class="w-6 h-6 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+       </header>
+       <main class="overflow-y-auto flex-grow">
+         <app-report-view [report]="report"></app-report-view>
+       </main>
+    </div>
+  </div>
+}

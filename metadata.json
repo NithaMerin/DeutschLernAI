@@ -1,0 +1,7 @@
+{
+  "name": "DeutschLern: German Language Companion",
+  "description": "An interactive app to help beginners learn German from A1 to C2 levels with exercises and a built-in translator, powered by Gemini.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

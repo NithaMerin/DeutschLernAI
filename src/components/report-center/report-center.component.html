@@ -1,0 +1,47 @@
+<div class="absolute top-full right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border z-20">
+  <div class="p-4 border-b">
+    <h3 class="font-bold text-slate-800">{{ 'reports.title' | translate }}</h3>
+  </div>
+  <div class="p-2 max-h-72 overflow-y-auto">
+    @if (reportService.reports().length > 0) {
+      <ul class="space-y-1">
+        @for(report of reportService.reports(); track report.id) {
+          <li>
+            <label class="flex items-center p-2 rounded-md hover:bg-slate-100 cursor-pointer transition-colors">
+              <input 
+                type="checkbox" 
+                class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                [checked]="selectedReportIds().includes(report.id)"
+                (change)="onCheckboxChange(report.id, $event)">
+              <div class="ml-3 text-sm">
+                <p class="font-semibold text-slate-700">{{ report.title }}</p>
+                <p class="text-xs text-slate-500">{{ report.date | date:'medium' }}</p>
+              </div>
+              <div class="ml-auto font-bold text-slate-600">
+                {{ report.score }}/{{ report.total }}
+              </div>
+            </label>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="text-sm text-slate-500 text-center p-4">{{ 'reports.empty' | translate }}</p>
+    }
+  </div>
+  @if (reportService.reports().length > 0) {
+    <div class="p-2 bg-slate-50 border-t flex justify-end items-center space-x-2 rounded-b-lg">
+      <button 
+        (click)="viewSelected()" 
+        [disabled]="isViewDisabled()"
+        class="px-3 py-1.5 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 transition-colors">
+        {{ 'reports.view' | translate }}
+      </button>
+      <button 
+        (click)="deleteSelected()" 
+        [disabled]="isDeleteDisabled()"
+        class="px-3 py-1.5 rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:bg-slate-400 transition-colors">
+        {{ 'reports.delete' | translate }}
+      </button>
+    </div>
+  }
+</div>
